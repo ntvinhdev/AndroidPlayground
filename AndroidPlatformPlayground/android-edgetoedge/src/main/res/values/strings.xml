@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AndroidEdgeToEdge</string>
+    <string name="element_text">hello world 1234</string>
 </resources>
