@@ -1,4 +1,4 @@
-package com.ntvinhdev.androidplatformplayground
+package com.ntvinhdev.android.edgetoedge
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "AndroidPlatformPlayground"
 include(":app")
+include(":android-edgetoedge")
