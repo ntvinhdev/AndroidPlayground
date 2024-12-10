@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.rememberScaffoldState
@@ -95,6 +96,7 @@ class MainActivity : AppCompatActivity() {
   }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun MainActivityScreen(
   navController: NavHostController,
