@@ -2,6 +2,7 @@ package com.yourcompany.android.jetnotes.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,7 +16,7 @@ private val LightThemeColors = lightColors(
   secondary = green
 )
 
-private val DarkThemeColors = lightColors(
+private val DarkThemeColors = darkColors(
   primary = Color(0xFF00A055),
   primaryVariant = Color(0xFF00F884),
   secondary = red,
