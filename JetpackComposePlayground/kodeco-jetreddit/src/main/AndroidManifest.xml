@@ -13,7 +13,7 @@
 
         <!-- Main Activity -->
         <activity
-            android:name="com.ntvinhdev.kodeco.jetreddit.MainActivity"
+            android:name="com.ntvinhdev.kodeco.jetreddit.JetRedditActivity"
             android:exported="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
