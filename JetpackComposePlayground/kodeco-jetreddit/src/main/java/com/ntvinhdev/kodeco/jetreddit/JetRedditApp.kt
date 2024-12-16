@@ -1,6 +1,5 @@
 package com.ntvinhdev.kodeco.jetreddit
 
-
 import android.annotation.SuppressLint
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.padding
@@ -27,19 +26,20 @@ import com.ntvinhdev.kodeco.jetreddit.screens.HomeScreen
 import com.ntvinhdev.kodeco.jetreddit.screens.MyProfileScreen
 import com.ntvinhdev.kodeco.jetreddit.screens.SubredditsScreen
 import com.ntvinhdev.kodeco.jetreddit.theme.JetRedditTheme
+import com.ntvinhdev.kodeco.jetreddit.viewmodel.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun JetRedditApp() {
+fun JetRedditApp(viewModel: MainViewModel) {
   JetRedditTheme {
-    AppContent()
+    AppContent(viewModel)
   }
 }
 
-@Composable
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
-private fun AppContent() {
+@Composable
+private fun AppContent(viewModel: MainViewModel) {
   val scaffoldState: ScaffoldState = rememberScaffoldState()
   val coroutineScope: CoroutineScope = rememberCoroutineScope()
   val navController = rememberNavController()
@@ -70,7 +70,8 @@ private fun AppContent() {
       content = {
         MainScreenContainer(
           navController = navController,
-          modifier = Modifier.padding(bottom = 56.dp)
+          modifier = Modifier.padding(bottom = 56.dp),
+          viewModel = viewModel
         )
       }
     )
@@ -82,7 +83,7 @@ fun getTopBar(
   scaffoldState: ScaffoldState,
   coroutineScope: CoroutineScope
 ): @Composable (() -> Unit) {
-  if (screenState == Screen.MyProfile) {
+  if (screenState == Screen.MyProfile || screenState == Screen.ChooseCommunity) {
     return {}
   } else {
     return {
@@ -132,7 +133,8 @@ fun TopAppBar(
 @Composable
 private fun MainScreenContainer(
   navController: NavHostController,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  viewModel: MainViewModel
 ) {
   Surface(
     modifier = modifier,
@@ -143,7 +145,7 @@ private fun MainScreenContainer(
       startDestination = Screen.Home.route
     ) {
       composable(Screen.Home.route) {
-        HomeScreen()
+        HomeScreen(viewModel)
       }
       composable(Screen.Subscriptions.route) {
         SubredditsScreen()
@@ -152,7 +154,7 @@ private fun MainScreenContainer(
         AddScreen()
       }
       composable(Screen.MyProfile.route) {
-        MyProfileScreen()
+        MyProfileScreen(viewModel) { navController.popBackStack() }
       }
     }
   }
@@ -163,6 +165,8 @@ private fun BottomNavigationComponent(
   modifier: Modifier = Modifier,
   navController: NavHostController
 ) {
+  var selectedItem by remember { mutableStateOf(0) }
+
   val items = listOf(
     NavigationItem(0, R.drawable.ic_baseline_home_24, R.string.home_icon, Screen.Home),
     NavigationItem(
@@ -182,8 +186,9 @@ private fun BottomNavigationComponent(
             contentDescription = stringResource(id = it.contentDescriptionResourceId)
           )
         },
-        selected = navController.currentDestination?.route == it.screen.route,
+        selected = selectedItem == it.index,
         onClick = {
+          selectedItem = it.index
           navController.navigate(it.screen.route) {
             popUpTo(navController.graph.findStartDestination().id) {
               saveState = true
