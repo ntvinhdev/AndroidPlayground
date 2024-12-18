@@ -26,12 +26,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.constraintlayout.widget.ConstraintLayout
 import com.ntvinhdev.kodeco.jetreddit.routing.Screen
 import com.ntvinhdev.kodeco.jetreddit.theme.JetRedditThemeSettings
 import com.ntvinhdev.kodeco.jetreddit.R
@@ -304,15 +302,4 @@ private fun AppDrawerFooter(modifier: Modifier = Modifier) {
 
 private fun changeTheme() {
   JetRedditThemeSettings.isInDarkTheme.value = JetRedditThemeSettings.isInDarkTheme.value.not()
-}
-
-@Preview
-@Composable
-private fun ProfileInfoItemPreview() {
-  ProfileInfoItem(
-    Icons.Filled.ShoppingCart,
-    R.string.default_reddit_age_amount,
-    R.string.reddit_age,
-    Modifier
-  )
 }
