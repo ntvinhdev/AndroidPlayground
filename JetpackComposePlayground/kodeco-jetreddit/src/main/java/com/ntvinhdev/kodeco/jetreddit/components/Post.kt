@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ntvinhdev.kodeco.jetreddit.R
+import com.ntvinhdev.kodeco.jetreddit.components.JoinButton
 import com.ntvinhdev.kodeco.jetreddit.domain.model.PostModel
 import com.ntvinhdev.kodeco.jetreddit.domain.model.PostModel.Companion.DEFAULT_POST
 
@@ -55,8 +56,14 @@ fun Post(post: PostModel, content: @Composable () -> Unit = {}) {
 }
 
 @Composable
-fun Header(post: PostModel) {
-  Row(modifier = Modifier.padding(start = 16.dp)) {
+fun Header(
+  post: PostModel,
+  onJoinButtonClick: (Boolean) -> Unit = {}
+) {
+  Row(
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = Modifier.padding(start = 16.dp)
+  ) {
     Image(
       bitmap = ImageBitmap.imageResource(id = R.drawable.subreddit_placeholder),
       contentDescription = stringResource(id = R.string.subreddits),
@@ -75,6 +82,8 @@ fun Header(post: PostModel) {
         color = Color.Gray
       )
     }
+    Spacer(modifier = Modifier.width(4.dp))
+    JoinButton(onJoinButtonClick)
     MoreActionsMenu()
   }
   Title(text = post.title)
