@@ -5,7 +5,7 @@ import com.ntvinhdev.kodeco.jetreddit.dependencyinjection.DependencyInjector
 
 class JetRedditApplication : Application() {
 
-  private lateinit var dependencyInjector: DependencyInjector
+  lateinit var dependencyInjector: DependencyInjector
 
   override fun onCreate() {
     super.onCreate()
