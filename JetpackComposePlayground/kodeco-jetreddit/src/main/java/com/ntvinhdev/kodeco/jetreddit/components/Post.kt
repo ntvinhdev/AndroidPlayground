@@ -29,24 +29,34 @@ import com.ntvinhdev.kodeco.jetreddit.domain.model.PostModel
 import com.ntvinhdev.kodeco.jetreddit.domain.model.PostModel.Companion.DEFAULT_POST
 
 @Composable
-fun TextPost(post: PostModel) {
-  Post(post) {
+fun TextPost(
+  post: PostModel,
+  onJoinButtonClick: (Boolean) -> Unit = {}
+) {
+  Post(post, onJoinButtonClick) {
     TextContent(post.text)
   }
 }
 
 @Composable
-fun ImagePost(post: PostModel) {
-  Post(post) {
+fun ImagePost(
+  post: PostModel,
+  onJoinButtonClick: (Boolean) -> Unit = {}
+) {
+  Post(post, onJoinButtonClick) {
     ImageContent(post.image ?: R.drawable.compose_course)
   }
 }
 
 @Composable
-fun Post(post: PostModel, content: @Composable () -> Unit = {}) {
+fun Post(
+  post: PostModel,
+  onJoinButtonClick: (Boolean) -> Unit = {},
+  content: @Composable () -> Unit = {}
+) {
   Card(shape = MaterialTheme.shapes.large) {
     Column(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)) {
-      Header(post)
+      Header(post, onJoinButtonClick)
       Spacer(modifier = Modifier.height(4.dp))
       content.invoke()
       Spacer(modifier = Modifier.height(8.dp))
