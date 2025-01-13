@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ntvinhdev.kodeco.jetreddit.appdrawer.AppDrawer
 import com.ntvinhdev.kodeco.jetreddit.routing.Screen
 import com.ntvinhdev.kodeco.jetreddit.screens.AddScreen
+import com.ntvinhdev.kodeco.jetreddit.screens.ChooseCommunityScreen
 import com.ntvinhdev.kodeco.jetreddit.screens.HomeScreen
 import com.ntvinhdev.kodeco.jetreddit.screens.MyProfileScreen
 import com.ntvinhdev.kodeco.jetreddit.screens.SubredditsScreen
@@ -151,10 +152,13 @@ private fun MainScreenContainer(
         SubredditsScreen()
       }
       composable(Screen.NewPost.route) {
-        AddScreen()
+        AddScreen(viewModel, navController)
       }
       composable(Screen.MyProfile.route) {
         MyProfileScreen(viewModel) { navController.popBackStack() }
+      }
+      composable(Screen.ChooseCommunity.route) {
+        ChooseCommunityScreen(viewModel) { navController.popBackStack() }
       }
     }
   }

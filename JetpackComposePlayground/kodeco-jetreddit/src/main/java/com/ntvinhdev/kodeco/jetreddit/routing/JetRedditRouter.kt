@@ -1,5 +1,7 @@
 package com.ntvinhdev.kodeco.jetreddit.routing
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import com.ntvinhdev.kodeco.jetreddit.R
 
 /**
@@ -24,6 +26,25 @@ sealed class Screen(val titleResId: Int, val route: String) {
         ChooseCommunity.route -> ChooseCommunity
         else -> Home
       }
+    }
+  }
+
+  object JetRedditRouter {
+    var currentScreen: MutableState<Screen> = mutableStateOf(
+      Home
+    )
+
+    private var previousScreen: MutableState<Screen> = mutableStateOf(
+      Home
+    )
+
+    fun navigateTo(destination: Screen) {
+      previousScreen.value = currentScreen.value
+      currentScreen.value = destination
+    }
+
+    fun goBack() {
+      currentScreen.value = previousScreen.value
     }
   }
 }
