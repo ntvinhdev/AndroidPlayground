@@ -12,6 +12,10 @@
         android:theme="@style/Theme.JetReddit"
         tools:ignore="GoogleAppIndexingWarning">
 
+        <activity
+            android:name=".screens.ChatActivity"
+            android:exported="true"/>
+
         <!-- Main Activity -->
         <activity
             android:name="com.ntvinhdev.kodeco.jetreddit.JetRedditActivity"
