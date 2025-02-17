@@ -24,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,7 +38,6 @@ import com.ntvinhdev.kodeco.jetreddit.R
 import com.ntvinhdev.kodeco.jetreddit.components.JoinedToast
 import com.ntvinhdev.kodeco.jetreddit.domain.model.PostModel
 import com.ntvinhdev.kodeco.jetreddit.domain.model.PostType
-import com.ntvinhdev.kodeco.jetreddit.viewmodel.MainViewModel
 import com.ntvinhdev.kodeco.jetreddit.views.TrendingTopicView
 import com.yourcompany.android.jetreddit.components.ImagePost
 import com.yourcompany.android.jetreddit.components.TextPost
@@ -74,8 +72,7 @@ private val trendingItems = listOf(
 )
 
 @Composable
-fun HomeScreen(viewModel: MainViewModel) {
-  val posts: List<PostModel> by viewModel.allPosts.observeAsState(listOf())
+fun HomeScreen(posts: List<PostModel>) {
   var isToastVisible by remember { mutableStateOf(false) }
   val onJoinClickAction: (Boolean) -> Unit = { joined ->
     isToastVisible = joined

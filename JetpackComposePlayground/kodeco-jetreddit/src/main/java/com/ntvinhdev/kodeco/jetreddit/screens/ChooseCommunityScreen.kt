@@ -1,13 +1,27 @@
 package com.ntvinhdev.kodeco.jetreddit.screens
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -15,8 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ntvinhdev.kodeco.jetreddit.R
-import com.ntvinhdev.kodeco.jetreddit.routing.Screen
-import com.ntvinhdev.kodeco.jetreddit.viewmodel.MainViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -27,18 +39,19 @@ private val defaultCommunities = listOf("kodeco", "androiddev", "puppies")
 
 @Composable
 fun ChooseCommunityScreen(
-  viewModel: MainViewModel,
   modifier: Modifier = Modifier,
+  communities: List<String>,
+  searchCommunities: (searchedText: String) -> Unit,
+  communitySelected: (community: String) -> Unit,
   onBackSelected: () -> Unit
 ) {
   val scope = rememberCoroutineScope()
-  val communities: List<String> by viewModel.subreddits.observeAsState(emptyList())
   var searchedText by remember { mutableStateOf("") }
   var currentJob by remember { mutableStateOf<Job?>(null) }
   val activeColor = MaterialTheme.colors.onSurface
 
   LaunchedEffect(Unit) {
-    viewModel.searchCommunities(searchedText)
+    searchCommunities(searchedText)
   }
 
   Column {
@@ -50,7 +63,7 @@ fun ChooseCommunityScreen(
         currentJob?.cancel()
         currentJob = scope.async {
           delay(SEARCH_DELAY_MILLIS)
-          viewModel.searchCommunities(searchedText)
+          searchCommunities(searchedText)
         }
       },
       leadingIcon = {
@@ -70,27 +83,24 @@ fun ChooseCommunityScreen(
         backgroundColor = MaterialTheme.colors.surface
       )
     )
-    SearchedCommunities(
-      communities,
-      viewModel,
-      modifier
-    )
+    SearchedCommunities(communities, communitySelected, modifier, onBackSelected)
   }
 }
 
 @Composable
 fun SearchedCommunities(
   communities: List<String>,
-  viewModel: MainViewModel?,
-  modifier: Modifier = Modifier
+  communitySelected: (community: String) -> Unit,
+  modifier: Modifier = Modifier,
+  onBackSelected: () -> Unit
 ) {
   communities.forEach {
     Community(
       text = it,
       modifier = modifier,
       onCommunityClicked = {
-        viewModel?.selectedCommunity?.postValue(it)
-        Screen.JetRedditRouter.goBack()
+        communitySelected(it)
+        onBackSelected.invoke()
       }
     )
   }
@@ -135,6 +145,6 @@ fun ChooseCommunityTopBar(
 @Composable
 fun SearchedCommunitiesPreview() {
   Column {
-    SearchedCommunities(defaultCommunities, null, Modifier)
+    SearchedCommunities(defaultCommunities, { }, Modifier) {}
   }
 }

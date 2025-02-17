@@ -4,11 +4,26 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.MailOutline
-import androidx.compose.runtime.*
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,6 +38,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ntvinhdev.kodeco.jetreddit.appdrawer.AppDrawer
+import com.ntvinhdev.kodeco.jetreddit.domain.model.PostModel
 import com.ntvinhdev.kodeco.jetreddit.routing.Screen
 import com.ntvinhdev.kodeco.jetreddit.screens.AddScreen
 import com.ntvinhdev.kodeco.jetreddit.screens.ChatActivity
@@ -31,20 +47,43 @@ import com.ntvinhdev.kodeco.jetreddit.screens.HomeScreen
 import com.ntvinhdev.kodeco.jetreddit.screens.MyProfileScreen
 import com.ntvinhdev.kodeco.jetreddit.screens.SubredditsScreen
 import com.ntvinhdev.kodeco.jetreddit.theme.JetRedditTheme
-import com.ntvinhdev.kodeco.jetreddit.viewmodel.MainViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun JetRedditApp(viewModel: MainViewModel) {
+fun JetRedditApp(
+  allPosts: List<PostModel>,
+  myPosts: List<PostModel>,
+  communities: List<String>,
+  selectedCommunity: String,
+  savePost: (post: PostModel) -> Unit,
+  searchCommunities: (searchedText: String) -> Unit,
+  communitySelected: (community: String) -> Unit,
+) {
   JetRedditTheme {
-    AppContent(viewModel)
+    AppContent(
+      allPosts,
+      myPosts,
+      communities,
+      selectedCommunity,
+      savePost,
+      searchCommunities,
+      communitySelected
+    )
   }
 }
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-private fun AppContent(viewModel: MainViewModel) {
+private fun AppContent(
+  allPosts: List<PostModel>,
+  myPosts: List<PostModel>,
+  communities: List<String>,
+  selectedCommunity: String,
+  savePost: (post: PostModel) -> Unit,
+  searchCommunities: (searchedText: String) -> Unit,
+  communitySelected: (community: String) -> Unit,
+) {
   val scaffoldState: ScaffoldState = rememberScaffoldState()
   val coroutineScope: CoroutineScope = rememberCoroutineScope()
   val navController = rememberNavController()
@@ -74,9 +113,15 @@ private fun AppContent(viewModel: MainViewModel) {
       },
       content = {
         MainScreenContainer(
-          navController = navController,
-          modifier = Modifier.padding(bottom = 56.dp),
-          viewModel = viewModel
+          navController,
+          Modifier.padding(bottom = 56.dp),
+          allPosts,
+          myPosts,
+          communities,
+          selectedCommunity,
+          savePost,
+          searchCommunities,
+          communitySelected
         )
       }
     )
@@ -153,7 +198,13 @@ fun TopAppBar(
 private fun MainScreenContainer(
   navController: NavHostController,
   modifier: Modifier = Modifier,
-  viewModel: MainViewModel
+  allPosts: List<PostModel>,
+  myPosts: List<PostModel>,
+  communities: List<String>,
+  selectedCommunity: String,
+  savePost: (post: PostModel) -> Unit,
+  searchCommunities: (searchedText: String) -> Unit,
+  communitySelected: (community: String) -> Unit,
 ) {
   Surface(
     modifier = modifier,
@@ -164,19 +215,33 @@ private fun MainScreenContainer(
       startDestination = Screen.Home.route
     ) {
       composable(Screen.Home.route) {
-        HomeScreen(viewModel)
+        HomeScreen(allPosts)
       }
+
       composable(Screen.Subscriptions.route) {
         SubredditsScreen()
       }
+
       composable(Screen.NewPost.route) {
-        AddScreen(viewModel, navController)
+        AddScreen(selectedCommunity, navController) {
+          savePost(it)
+        }
       }
+
       composable(Screen.MyProfile.route) {
-        MyProfileScreen(viewModel) { navController.popBackStack() }
+        MyProfileScreen(myPosts) { navController.popBackStack() }
       }
+
       composable(Screen.ChooseCommunity.route) {
-        ChooseCommunityScreen(viewModel) { navController.popBackStack() }
+        ChooseCommunityScreen(
+          communities = communities,
+          searchCommunities = { searchedText ->
+            searchCommunities(searchedText)
+          },
+          communitySelected = { community ->
+            communitySelected(community)
+          }
+        ) { navController.popBackStack() }
       }
     }
   }

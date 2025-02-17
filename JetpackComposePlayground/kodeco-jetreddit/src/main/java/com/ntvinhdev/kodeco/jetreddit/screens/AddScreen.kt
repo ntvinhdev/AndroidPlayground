@@ -17,7 +17,6 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,25 +30,26 @@ import androidx.navigation.NavHostController
 import com.ntvinhdev.kodeco.jetreddit.R
 import com.ntvinhdev.kodeco.jetreddit.domain.model.PostModel
 import com.ntvinhdev.kodeco.jetreddit.routing.Screen
-import com.ntvinhdev.kodeco.jetreddit.viewmodel.MainViewModel
 
 @Composable
-fun AddScreen(viewModel: MainViewModel, navHostController: NavHostController) {
-
-  val selectedCommunity: String by viewModel.selectedCommunity.observeAsState("")
+fun AddScreen(
+  selectedCommunity: String,
+  navHostController: NavHostController,
+  savePost: (post: PostModel) -> Unit
+) {
 
   var post by remember { mutableStateOf(PostModel.EMPTY) }
 
   Column(modifier = Modifier.fillMaxSize()) {
-
     CommunityPicker(selectedCommunity, navHostController)
-
-    TitleTextField(post.title) { newTitle -> post = post.copy(title = newTitle) }
-
-    BodyTextField(post.text) { newContent -> post = post.copy(text = newContent) }
-
+    TitleTextField(post.title) {
+      newTitle -> post = post.copy(title = newTitle)
+    }
+    BodyTextField(post.text) {
+      newContent -> post = post.copy(text = newContent)
+    }
     AddPostButton(selectedCommunity.isNotEmpty() && post.title.isNotEmpty()) {
-      viewModel.savePost(post)
+      savePost(post)
       navHostController.popBackStack()
     }
   }
