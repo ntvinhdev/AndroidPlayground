@@ -60,20 +60,23 @@ dependencies {
     kapt libs.androidx.room.compiler
     implementation libs.androidx.appcompat
 
+    androidTestImplementation libs.ui.test
+    androidTestImplementation libs.ui.test.unit4
     androidTestImplementation platform(libs.androidx.compose.bom)
     debugImplementation libs.androidx.ui.test.manifest
+    debugImplementation libs.ui.test.manifest
     implementation libs.androidx.activity.compose
-    implementation platform(libs.androidx.compose.bom)
-    implementation libs.androidx.runtime
-    implementation libs.androidx.runtime.livedata
-    implementation libs.ui
-    implementation libs.androidx.foundation.layout
-    implementation libs.material
-    implementation libs.androidx.material
-    implementation libs.androidx.material.icons.extended
-    implementation libs.androidx.foundation.layout
     implementation libs.androidx.animation
-    implementation libs.ui.tooling
     implementation libs.androidx.compiler
     implementation libs.androidx.core.splashscreen
+    implementation libs.androidx.foundation.layout
+    implementation libs.androidx.foundation.layout
+    implementation libs.androidx.material
+    implementation libs.androidx.material.icons.extended
+    implementation libs.androidx.runtime
+    implementation libs.androidx.runtime.livedata
+    implementation libs.material
+    implementation libs.ui
+    implementation libs.ui.tooling
+    implementation platform(libs.androidx.compose.bom)
 }

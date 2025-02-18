@@ -29,10 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.yourcompany.android.jetreddit.util.Tags
 
 @Composable
 fun JoinButton(onClick: (Boolean) -> Unit = {}) {
@@ -107,6 +109,7 @@ fun JoinButton(onClick: (Boolean) -> Unit = {}) {
           JoinButtonState.IDLE
         }
       })
+      .testTag(Tags.JOIN_BUTTON)
   ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
       Icon(

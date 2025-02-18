@@ -30,7 +30,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -53,14 +52,13 @@ import com.ntvinhdev.kodeco.jetreddit.appdrawer.ProfileInfo
 import com.ntvinhdev.kodeco.jetreddit.domain.model.PostModel
 import com.ntvinhdev.kodeco.jetreddit.routing.MyProfileRouter
 import com.ntvinhdev.kodeco.jetreddit.routing.MyProfileScreenType
-import com.ntvinhdev.kodeco.jetreddit.viewmodel.MainViewModel
 import com.yourcompany.android.jetreddit.components.PostAction
 
 private val tabNames = listOf(R.string.posts, R.string.about)
 
 @Composable
 fun MyProfileScreen(
-  viewModel: MainViewModel,
+  posts: List<PostModel>,
   modifier: Modifier = Modifier,
   onBackSelected: () -> Unit
 ) {
@@ -120,7 +118,7 @@ fun MyProfileScreen(
 
       Crossfade(targetState = MyProfileRouter.currentScreen) { screen ->
         when (screen.value) {
-          MyProfileScreenType.Posts -> MyProfilePosts(modifier, viewModel)
+          MyProfileScreenType.Posts -> MyProfilePosts(modifier, posts)
           MyProfileScreenType.About -> MyProfileAbout()
         }
       }
@@ -163,10 +161,7 @@ private fun changeScreen(index: Int) {
 }
 
 @Composable
-fun MyProfilePosts(modifier: Modifier, viewModel: MainViewModel) {
-
-  val posts: List<PostModel> by viewModel.myPosts.observeAsState(listOf())
-
+fun MyProfilePosts(modifier: Modifier, posts: List<PostModel>) {
   LazyColumn(
     modifier = modifier.background(color = MaterialTheme.colors.secondary)
   ) {

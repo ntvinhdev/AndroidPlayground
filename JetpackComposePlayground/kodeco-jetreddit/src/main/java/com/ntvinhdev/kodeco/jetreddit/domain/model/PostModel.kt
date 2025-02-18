@@ -20,7 +20,7 @@ data class PostModel(
       "johndoe",
       "androiddev",
       "Watch this awesome Jetpack Compose course!",
-      "",
+      "lorem ipsum",
       "5614",
       "523",
       PostType.IMAGE,

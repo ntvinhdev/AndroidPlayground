@@ -58,6 +58,9 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
+ui-test = { module = "androidx.compose.ui:ui-test", version.ref = "ui" }
+ui-test-unit4 = { module = "androidx.compose.ui:ui", version.ref = "ui" }
+ui-test-manifest = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiTooling" }
 
 [plugins]

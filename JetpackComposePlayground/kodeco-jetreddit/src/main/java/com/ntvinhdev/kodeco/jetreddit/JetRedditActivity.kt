@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import com.ntvinhdev.kodeco.jetreddit.viewmodel.MainViewModel
 import com.ntvinhdev.kodeco.jetreddit.viewmodel.MainViewModelFactory
 
@@ -23,7 +25,26 @@ class JetRedditActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
 
     setContent {
-      JetRedditApp(viewModel)
+      val allPosts by viewModel.allPosts.observeAsState(listOf())
+      val myPosts by viewModel.myPosts.observeAsState(listOf())
+      val communities by viewModel.subreddits.observeAsState(listOf())
+      val selectedCommunity by viewModel.selectedCommunity.observeAsState("")
+
+      JetRedditApp(
+        allPosts,
+        myPosts,
+        communities,
+        selectedCommunity,
+        savePost = { post ->
+          viewModel.savePost(post)
+        },
+        searchCommunities = { searchedText ->
+          viewModel.searchCommunities(searchedText)
+        },
+        communitySelected = { community ->
+          viewModel.selectedCommunity.postValue(community)
+        }
+      )
     }
   }
 }
