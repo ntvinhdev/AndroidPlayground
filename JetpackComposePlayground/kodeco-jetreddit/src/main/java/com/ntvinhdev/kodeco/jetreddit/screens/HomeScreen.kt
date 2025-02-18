@@ -30,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,7 @@ import com.ntvinhdev.kodeco.jetreddit.domain.model.PostType
 import com.ntvinhdev.kodeco.jetreddit.views.TrendingTopicView
 import com.yourcompany.android.jetreddit.components.ImagePost
 import com.yourcompany.android.jetreddit.components.TextPost
+import com.yourcompany.android.jetreddit.util.Tags
 import java.util.Timer
 import kotlin.concurrent.schedule
 
@@ -116,6 +118,7 @@ fun HomeScreen(posts: List<PostModel>) {
       modifier = Modifier
         .align(Alignment.BottomCenter)
         .padding(bottom = 16.dp)
+        .testTag(Tags.JOINED_TOAST)
     ) {
       JoinedToast(visible = isToastVisible)
     }
@@ -166,13 +169,15 @@ private fun TrendingTopics(
 }
 
 @Composable
-private fun TrendingTopic(trendingTopic: TrendingTopicModel) {
-  AndroidView({ context ->
-    TrendingTopicView(context).apply {
-      text = trendingTopic.text
-      image = trendingTopic.imageRes
-    }
-  })
+fun TrendingTopic(trendingTopic: TrendingTopicModel) {
+  AndroidView(
+    modifier = Modifier.testTag(Tags.TRENDING_ITEM),
+    factory = { context ->
+      TrendingTopicView(context).apply {
+        text = trendingTopic.text
+        image = trendingTopic.imageRes
+      }
+    })
 }
 
 private fun mapHomeScreenItems(
@@ -219,7 +224,7 @@ private enum class HomeScreenItemType {
   POST
 }
 
-private data class TrendingTopicModel(
+data class TrendingTopicModel(
   val text: String,
   @DrawableRes val imageRes: Int = 0
 )

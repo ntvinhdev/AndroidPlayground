@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -27,6 +28,7 @@ import com.ntvinhdev.kodeco.jetreddit.R
 import com.ntvinhdev.kodeco.jetreddit.components.JoinButton
 import com.ntvinhdev.kodeco.jetreddit.domain.model.PostModel
 import com.ntvinhdev.kodeco.jetreddit.domain.model.PostModel.Companion.DEFAULT_POST
+import com.yourcompany.android.jetreddit.util.Tags
 
 @Composable
 fun TextPost(
@@ -178,7 +180,8 @@ fun ImageContent(image: Int) {
     contentDescription = stringResource(id = R.string.post_header_description),
     modifier = Modifier
       .fillMaxWidth()
-      .aspectRatio(imageAsset.width.toFloat() / imageAsset.height),
+      .aspectRatio(imageAsset.width.toFloat() / imageAsset.height)
+      .testTag(Tags.POST_IMAGE),
     contentScale = ContentScale.Crop
   )
 }

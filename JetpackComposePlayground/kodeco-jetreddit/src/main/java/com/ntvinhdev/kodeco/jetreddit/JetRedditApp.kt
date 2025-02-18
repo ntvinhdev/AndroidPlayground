@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
@@ -47,6 +48,7 @@ import com.ntvinhdev.kodeco.jetreddit.screens.HomeScreen
 import com.ntvinhdev.kodeco.jetreddit.screens.MyProfileScreen
 import com.ntvinhdev.kodeco.jetreddit.screens.SubredditsScreen
 import com.ntvinhdev.kodeco.jetreddit.theme.JetRedditTheme
+import com.yourcompany.android.jetreddit.util.Tags
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -168,9 +170,11 @@ fun TopAppBar(
     },
     backgroundColor = colors.surface,
     navigationIcon = {
-      IconButton(onClick = {
-        coroutineScope.launch { scaffoldState.drawerState.open() }
-      }) {
+      IconButton(
+        modifier = Modifier.testTag(Tags.ACCOUNT_BUTTON),
+        onClick = {
+          coroutineScope.launch { scaffoldState.drawerState.open() }
+        }) {
         Icon(
           Icons.Filled.AccountCircle,
           tint = Color.LightGray,
@@ -180,9 +184,11 @@ fun TopAppBar(
     },
     actions = {
       if (screen == Screen.Home) {
-        IconButton(onClick = {
-          context.startActivity(Intent(context, ChatActivity::class.java))
-        }) {
+        IconButton(
+          modifier = Modifier.testTag(Tags.CHAT_BUTTON),
+          onClick = {
+            context.startActivity(Intent(context, ChatActivity::class.java))
+          }) {
           Icon(
             Icons.Filled.MailOutline,
             tint = Color.LightGray,
@@ -267,6 +273,7 @@ private fun BottomNavigationComponent(
   BottomNavigation(modifier = modifier) {
     items.forEach {
       BottomNavigationItem(
+        modifier = Modifier.testTag(it.screen.route),
         icon = {
           Icon(
             imageVector = ImageVector.vectorResource(id = it.vectorResourceId),
