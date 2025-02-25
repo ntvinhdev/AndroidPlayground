@@ -1,5 +1,6 @@
 package com.ntvinhdev.kodeco.jetreddit.screens
 
+import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -91,9 +93,9 @@ fun HomeScreen(posts: List<PostModel>) {
     LazyColumn(
       modifier = Modifier.background(color = MaterialTheme.colors.secondary)
     ) {
-      items(
+      itemsIndexed(
         items = homeScreenItems,
-        itemContent = { item ->
+        itemContent = { index, item ->
           if (item.type == HomeScreenItemType.TRENDING) {
             TrendingTopics(
               trendingTopics = trendingItems,
@@ -105,8 +107,19 @@ fun HomeScreen(posts: List<PostModel>) {
           } else if (item.post != null) {
             val post = item.post
             if (post.type == PostType.TEXT) {
-              TextPost(post, onJoinClickAction)
-            } else {
+
+              // For learning purposes, clicking on the first post will open Post screen
+              val context = LocalContext.current
+              val onPostClickedAction: () -> Unit = if (index == 1) {
+                { context.startActivity(Intent(context, PostActivity::class.java)) }
+              } else {
+                {}
+              }
+              TextPost(
+                post = post,
+                onPostClicked = onPostClickedAction,
+                onJoinButtonClick = onJoinClickAction
+              )            } else {
               ImagePost(post, onJoinClickAction)
             }
             Spacer(modifier = Modifier.height(6.dp))

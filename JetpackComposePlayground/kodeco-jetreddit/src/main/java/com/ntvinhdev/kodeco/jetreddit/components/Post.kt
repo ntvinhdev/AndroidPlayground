@@ -20,6 +20,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,9 +37,14 @@ import com.yourcompany.android.jetreddit.util.Tags
 @Composable
 fun TextPost(
   post: PostModel,
+  onPostClicked: () -> Unit = {},
   onJoinButtonClick: (Boolean) -> Unit = {}
 ) {
-  Post(post, onJoinButtonClick) {
+  Post(
+    post = post,
+    onJoinButtonClick = onJoinButtonClick,
+    onPostClicked = onPostClicked
+  ) {
     TextContent(post.text)
   }
 }
@@ -43,20 +52,62 @@ fun TextPost(
 @Composable
 fun ImagePost(
   post: PostModel,
-  onJoinButtonClick: (Boolean) -> Unit = {}
+  onJoinButtonClick: (Boolean) -> Unit = {},
+  onPostClicked: () -> Unit = {}
 ) {
-  Post(post, onJoinButtonClick) {
-    ImageContent(post.image ?: R.drawable.compose_course)
+  Post(
+    post = post,
+    onJoinButtonClick = onJoinButtonClick,
+    onPostClicked = onPostClicked
+  ) {
+    ImageContent(post.image!!)
   }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Post(
   post: PostModel,
   onJoinButtonClick: (Boolean) -> Unit = {},
+  onPostClicked: () -> Unit = {},
   content: @Composable () -> Unit = {}
 ) {
-  Card(shape = MaterialTheme.shapes.large) {
+  Card(
+    shape = MaterialTheme.shapes.large,
+    onClick = { onPostClicked.invoke() },
+    modifier = Modifier.semantics { // HERE
+      customActions = listOf(
+        CustomAccessibilityAction(
+          label = "Join",
+          action = { /* Join / Leave */ true }
+        ),
+        CustomAccessibilityAction(
+          label = "Save post",
+          action = { /* Save post */ true }
+        ),
+        CustomAccessibilityAction(
+          label = "Upvote",
+          action = { /* Upvote */ true }
+        ),
+        CustomAccessibilityAction(
+          label = "Downvote",
+          action = { /* Downvote */ true }
+        ),
+        CustomAccessibilityAction(
+          label = "Navigate to comments",
+          action = { /* Navigate to comments */ true }
+        ),
+        CustomAccessibilityAction(
+          label = "Share",
+          action = { /* Share */ true }
+        ),
+        CustomAccessibilityAction(
+          label = "Award",
+          action = { /* Award */ true }
+        )
+      )
+    }
+  ) {
     Column(modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)) {
       Header(post, onJoinButtonClick)
       Spacer(modifier = Modifier.height(4.dp))
@@ -104,7 +155,9 @@ fun Header(
 @Composable
 fun MoreActionsMenu() {
   var expanded by remember { mutableStateOf(false) }
-  Box(modifier = Modifier.wrapContentSize(Alignment.TopStart)) {
+  Box(modifier = Modifier
+    .wrapContentSize(Alignment.TopStart)
+    .clearAndSetSemantics { }) {
 
     IconButton(onClick = { expanded = true }) {
       Icon(
@@ -191,7 +244,8 @@ fun PostActions(post: PostModel) {
   Row(
     modifier = Modifier
       .fillMaxWidth()
-      .padding(start = 16.dp, end = 16.dp),
+      .padding(start = 16.dp, end = 16.dp)
+      .clearAndSetSemantics { },
     horizontalArrangement = Arrangement.SpaceBetween,
     verticalAlignment = Alignment.CenterVertically
   ) {

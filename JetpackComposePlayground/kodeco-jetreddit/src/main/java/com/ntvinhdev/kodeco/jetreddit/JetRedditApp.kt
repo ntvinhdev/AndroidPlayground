@@ -3,7 +3,9 @@ package com.ntvinhdev.kodeco.jetreddit
 import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -31,6 +33,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -184,15 +188,29 @@ fun TopAppBar(
     },
     actions = {
       if (screen == Screen.Home) {
+//        // Alternative solution
+//        Icon(
+//          modifier = Modifier
+//            .clickable { context.startActivity(Intent(context, ChatActivity::class.java)) }
+//            .padding(12.dp) // increase click space
+//            .size(24.dp),
+//          imageVector = Icons.Filled.MailOutline,
+//          tint = Color.LightGray,
+//          contentDescription = null
+//        )
         IconButton(
-          modifier = Modifier.testTag(Tags.CHAT_BUTTON),
+          modifier = Modifier
+            .semantics {
+              onClick(label = "open Chat", action = null)
+            }
+            .testTag(Tags.CHAT_BUTTON),
           onClick = {
             context.startActivity(Intent(context, ChatActivity::class.java))
           }) {
           Icon(
             Icons.Filled.MailOutline,
             tint = Color.LightGray,
-            contentDescription = "Chat Icon"
+            contentDescription = "Navigate to chat"
           )
         }
       }

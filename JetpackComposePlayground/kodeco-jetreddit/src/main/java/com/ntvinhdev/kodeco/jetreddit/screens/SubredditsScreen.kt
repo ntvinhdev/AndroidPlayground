@@ -1,15 +1,24 @@
 package com.ntvinhdev.kodeco.jetreddit.screens
 
 import androidx.annotation.StringRes
+import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds.remember
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,6 +29,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -67,7 +79,21 @@ val communities = listOf(
 
 @Composable
 fun SubredditsScreen(modifier: Modifier = Modifier) {
-  //TODO add your code here
+  Column(modifier = modifier.verticalScroll(rememberScrollState())) {
+    Text(
+      modifier = modifier.padding(16.dp),
+      text = stringResource(R.string.recently_visited_subreddits),
+      fontSize = 12.sp,
+      style = MaterialTheme.typography.subtitle1
+    )
+
+    LazyRow(
+      modifier = modifier.padding(end = 16.dp)
+    ) {
+      items(subreddits) { Subreddit(it) }
+    }
+    Communities(modifier)
+  }
 }
 
 @Composable
@@ -77,7 +103,12 @@ fun Subreddit(subredditModel: SubredditModel, modifier: Modifier = Modifier) {
     shape = RoundedCornerShape(4.dp),
     modifier = modifier
       .size(120.dp)
-      .padding(start = 1.dp, end = 2.dp, top = 4.dp, bottom = 4.dp)
+      .padding(
+        start = 2.dp,
+        end = 2.dp,
+        top = 4.dp,
+        bottom = 4.dp
+      )
   ) {
     SubredditBody(subredditModel)
   }
@@ -91,39 +122,44 @@ fun SubredditBody(subredditModel: SubredditModel, modifier: Modifier = Modifier)
       .background(color = MaterialTheme.colors.surface)
   ) {
     val (backgroundImage, icon, name, members, description) = createRefs()
+
     SubredditImage(
       modifier = modifier.constrainAs(backgroundImage) {
         centerHorizontallyTo(parent)
-        top.linkTo(anchor = parent.top)
+        top.linkTo(parent.top)
       }
     )
+
     SubredditIcon(
       modifier = modifier
         .constrainAs(icon) {
-          top.linkTo(anchor = backgroundImage.bottom)
-          bottom.linkTo(anchor = backgroundImage.bottom)
+          top.linkTo(backgroundImage.bottom)
+          bottom.linkTo(backgroundImage.bottom)
           centerHorizontallyTo(parent)
         }
         .zIndex(1f)
     )
+
     SubredditName(
       nameStringRes = subredditModel.nameStringRes,
       modifier = modifier.constrainAs(name) {
-        top.linkTo(anchor = icon.bottom)
+        top.linkTo(icon.bottom)
         centerHorizontallyTo(parent)
       }
     )
+
     SubredditMembers(
       membersStringRes = subredditModel.membersStringRes,
       modifier = modifier.constrainAs(members) {
-        top.linkTo(anchor = name.bottom)
+        top.linkTo(name.bottom)
         centerHorizontallyTo(parent)
       }
     )
+
     SubredditDescription(
       descriptionStringRes = subredditModel.descriptionStringRes,
       modifier = modifier.constrainAs(description) {
-        top.linkTo(anchor = members.bottom)
+        top.linkTo(members.bottom)
         centerHorizontallyTo(parent)
       }
     )
@@ -186,17 +222,39 @@ fun SubredditDescription(modifier: Modifier, @StringRes descriptionStringRes: In
 fun Community(
   text: String,
   modifier: Modifier = Modifier,
+  showToggle: Boolean = false,
   onCommunityClicked: () -> Unit = {}
 ) {
+  var checked by remember { mutableStateOf(true) }
+
+  val defaultRowModifier = modifier
+    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+    .fillMaxWidth()
+  val rowModifier = if (showToggle) {
+    defaultRowModifier
+      .toggleable(
+        value = checked,
+        onValueChange = { checked = it },
+        role = Role.Switch
+      )
+      .semantics {
+        stateDescription = if (checked) {
+          "Subscribed"
+        } else {
+          "Not subscribed"
+        }
+      }
+  } else {
+    defaultRowModifier.clickable { onCommunityClicked.invoke() }
+  }
+
   Row(
-    modifier = modifier
-      .padding(start = 16.dp, top = 16.dp)
-      .fillMaxWidth()
-      .clickable { onCommunityClicked.invoke() }
+    modifier = rowModifier,
+    verticalAlignment = Alignment.CenterVertically
   ) {
     Image(
       bitmap = ImageBitmap.imageResource(id = R.drawable.subreddit_placeholder),
-      contentDescription = stringResource(id = R.string.community_icon),
+      contentDescription = null,
       modifier = modifier
         .size(24.dp)
         .clip(CircleShape)
@@ -206,20 +264,33 @@ fun Community(
       color = MaterialTheme.colors.primaryVariant,
       text = text,
       fontWeight = FontWeight.Bold,
-      modifier = modifier.padding(start = 16.dp).align(Alignment.CenterVertically)
+      modifier = modifier
+        .padding(start = 16.dp)
+        .align(Alignment.CenterVertically)
+        .weight(1f)
     )
+    if (showToggle) {
+      Switch(
+        checked = checked,
+//        onCheckedChange = { checked = !checked }
+        onCheckedChange = null
+      )
+    }
   }
 }
 
 @Composable
 fun Communities(modifier: Modifier = Modifier) {
   mainCommunities.forEach {
-    Community(text = stringResource(id = it))
+    Community(text = stringResource(it), showToggle = true)
   }
+
   Spacer(modifier = modifier.height(4.dp))
-  BackgroundText(text = stringResource(R.string.communities))
+
+  BackgroundText(stringResource(R.string.communities))
+
   communities.forEach {
-    Community(text = stringResource(id = it))
+    Community(text = stringResource(it), showToggle = true)
   }
 }
 

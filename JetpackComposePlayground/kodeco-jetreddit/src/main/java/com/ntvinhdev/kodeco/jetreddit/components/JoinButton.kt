@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -73,7 +74,7 @@ fun JoinButton(onClick: (Boolean) -> Unit = {}) {
     transitionSpec = { tween(duration) },
     label = "Text Max Width"
   ) { state ->
-    when(state) {
+    when (state) {
       JoinButtonState.IDLE -> 40.dp
       JoinButtonState.PRESSED -> 0.dp
     }
@@ -123,10 +124,12 @@ fun JoinButton(onClick: (Boolean) -> Unit = {}) {
         color = Color.White,
         fontSize = 14.sp,
         maxLines = 1,
-        modifier = Modifier.widthIn(
-          min = 0.dp,
-          max = textMaxWidth
-        )
+        modifier = Modifier
+          .widthIn(
+            min = 0.dp,
+            max = textMaxWidth
+          )
+          .clearAndSetSemantics { }
       )
     }
   }
